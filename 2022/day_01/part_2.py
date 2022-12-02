@@ -16,4 +16,4 @@ elf_cals.append(new_elf)
 
 elf_sums = list(map(sum, elf_cals))
 
-print(sorted(elf_sums[-3:]))
+print(sum(sorted(elf_sums)[-3:]))
