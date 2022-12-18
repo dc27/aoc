@@ -59,8 +59,6 @@ def get_dir_sizes(d, counter):
     
     pass
 
-# The R in IHR stands for 'I hate recursion'
-
 get_dir_sizes.count = 0
 get_dir_sizes(file_structure, counter = 0)
 

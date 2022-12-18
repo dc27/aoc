@@ -49,6 +49,8 @@ def get_dir_sizes(d, counter):
     for k, v in d.items():
         if isinstance(v, dict):
             # got stuck here for aages not realising dirs could have the same name
+            # bodge (is just to add a loop number in front of each different dir
+            # so they don't get wrongly updated / deleted)
             dir_sizes[''.join([str(counter), k])] = get_size(d[k])
             get_dir_sizes.count += 1
             counter = get_dir_sizes.count
