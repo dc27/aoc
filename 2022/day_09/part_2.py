@@ -1,4 +1,4 @@
-file = 'input.txt'
+file = 'test_2.txt'
 
 # format = (x, y)
 
@@ -23,7 +23,7 @@ h_shifts = {
     'L' : (-1, 0)
 }
 
-def move_tail(h, t):
+def follow_head(h, t):
 
     diff_x = h[0] - t[0]
     diff_y = h[1] - t[1]
@@ -43,6 +43,27 @@ def move_tail(h, t):
     
     return(t)
 
+def follow_tail(t1, t2):
+
+    diff_x = t1[0] - t2[0]
+    diff_y = t1[1] - t2[1]
+
+    if abs(diff_x) < 2 & (abs(diff_y)) < 2:
+        return(t2)
+
+    if diff_x == 2 & diff_y == 2:
+        t2 = (t1[0] - 1, t1[1] - 1)
+    elif diff_x == -2 & diff_y == 2:
+        t2 = (t1[0] + 1, t1[1] - 1)
+    elif diff_x == 2 & diff_y == -2:
+        t2 = (t1[0] + 1, t1[1] - 1)
+    elif diff_x == -2 & diff_y == -2:
+        t2 = (t1[0] - 1, t1[1] - 1)
+    else:
+        t2 = follow_head(t1, t2)
+    
+    return(t2)
+    
 
 t_pos = set()
 
@@ -54,10 +75,11 @@ for line in open(file):
     for i in range(n):
         # update Head
         node_pos['H'] = (node_pos['H'][0] + h_shifts[dir][0], node_pos['H'][1] + h_shifts[dir][1])
-        for j in range(1, 10):
-        # print(H)
-            T = move_tail(node_pos[nodes[j-1]], node_pos[nodes[j]])
-            t_pos.add(T)
+        node_pos['1'] = follow_head(node_pos['H'], node_pos['1'])
+        for j in range(2, 10):
+            # print(H)
+            node_pos[nodes[j]] = follow_tail(node_pos[nodes[j-1]], node_pos[nodes[j]])
+            t_pos.add(node_pos['T'])
 
 
 print(len(t_pos))
