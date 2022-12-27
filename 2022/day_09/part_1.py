@@ -1,4 +1,4 @@
-file = 'input.txt'
+file = 'test.txt'
 
 # format = (x, y)
 
