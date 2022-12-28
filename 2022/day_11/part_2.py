@@ -38,10 +38,12 @@ if_f:{self.f}
     def inspect(self, old):
         new = 0
         _locals = locals()
+        # use formula from input to calculate new
         exec(self.op, globals(), _locals)
         return(_locals['new'])
 
     def inspect_items(self):
+        # overwrite items after inspection
         self.items = tuple(self.inspect(item) for item in self.items)
         pass
 
@@ -75,6 +77,7 @@ else:
 # assign monkey info to Monke objects
 Monkeys = []
 
+# read list of monkey info, different info held in monkes[i][...]
 for i in range(len(monkes)):
     starting_items = tuple(map(int, monkes[i][1].split(': ')[-1].split(',')))
     operation = monkes[i][2].split(': ')[-1]
@@ -93,6 +96,7 @@ test_product = 1
 # replace items with remainder after dividing by product
 for monkey in Monkeys:
     test_product *= monkey.test
+
 
 for cycle in range(1, 10001):
     for i in range(len(Monkeys)):
