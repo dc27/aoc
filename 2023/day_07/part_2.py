@@ -52,7 +52,6 @@ for line in input_stream:
     hand, bid = line.split()
     rank = get_hand_rank(hand)
 
-
     n_hands_at_rank = len(ordered_hands[rank])
 
     # no hands have been placed at that rank (e.g. no full houses yet)
