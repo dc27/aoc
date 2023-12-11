@@ -1,6 +1,6 @@
 import re
 
-file = 'test2.txt'
+file = 'input.txt'
 
 input_stream = [line.strip() for line in open(file, 'r')]
 
@@ -56,8 +56,8 @@ def replace_with_pipechar(grid:list[str], coords:tuple)->None:
         "7": "\u2557",
         "L": "\u255A",
         "J": "\u255D",
-        "S": "\u2551",
-        "\u2551": "\u2551"
+        "S": "\u2554",
+        "\u2554": "\u2554"
     }
 
     r, c = coords
@@ -84,8 +84,6 @@ current_A = current_B = (r,c)
 next_A, next_B = available_routes
 
 met = False
-steps = 1
-
 
 while not met:
     # update previous positions for each path
@@ -103,69 +101,30 @@ while not met:
     met = next_A == next_B
 
 
-
 replace_with_pipechar(input_stream, current_A)
 replace_with_pipechar(input_stream, current_B)
 replace_with_pipechar(input_stream, next_A)
 
-pipe_chars = ["╔", "╝", "╚", "╗", "║"]
+# going through the line, these characters are what indicate boundary crossers
+# when encountered this is where inside gets flipped. Not sure why it's the 
+# chars that block the 'south' part of the tile.
 
-ops = {"╔" : "╗", "╚" : "╝"}
-openers = ops.keys()
+boundary_chars = ["╔", "║", "╗"]
 
-
-closers = dict()
-
-for char in openers:
-    closers[char] = [c for c in pipe_chars if c != ops[char]]
-
-closers["║"] = ["╗", "╝", "║"]
-
-print(closers)
-
-
-# closers = {
-#     "╔" : ["╗", "║"],
-#     "╚" : ["╝", "║"],
-#     "╗" : [""],
-#     "╝" : [""],
-#     "║" : ["╗", "╝", "║"]
-# }
-
-inner_tiles = 0
+n_inner_tiles = 0
 for r, line in enumerate(input_stream):
     line = re.sub(r'[\-|FJL7.]', r'.', line)
-    inside = 0
-    boundary_chars = []
+    inside = False
     for c, char in enumerate(line):
-        if inside > 0 and char == '.':
-            inner_tiles += 1
+        if inside and char == '.':
+            n_inner_tiles += 1
             replace_with_star(input_stream, (r, c))
 
         # if outside, check to see if you're at a boundary -> if so inside
-        if inside == 0:
-            if char in closers.keys():
-                inside += 1
-                # keep track of the pipe boundary
-                boundary_chars.append(char)
-        # otherwise
-        else:
-            if char in closers[boundary_chars[-1]]:
-                inside -= 1
-                boundary_chars.pop()
-            elif char in closers.keys():
-                inside += 1
-                boundary_chars.append(char)
-        if r == 4:
-            print(char, boundary_chars, inside)
+        if char in boundary_chars:
+            inside = not inside
         
-
-for line in input_stream:
-    print(line)
-
-print(inner_tiles)
-
-
+print(n_inner_tiles)
 
 
 # part 1:
@@ -174,37 +133,10 @@ print(inner_tiles)
 # keep traversing the loop in routes A and B until they reach the same spot
 
 # part 2:
-# do part 1. don't need to count the steps this time. Rewritw the grid so that
+# do part 1. don't need to count the steps this time. Rewrite the grid so that
 # it has proper chars instead of J's and -'s.
 # turn every character that is not proper pipe into .
-
-# go through the grid
+# go through the new grid
 # for each line count the number of points (tiles) within the pipe structure by
 # determining if you are currently inside or outside the pipe
-# ... types of boundary
-# L --> J not inside. L --> I inside. L --> L inside. L --> 7 inside. L --> F inside
-# I --> [I, J, L, F, 7] inside
 
-
-
-
-
-"""
-- -> \u2550
-| -> \u2551
-F -> \u2554
-7 -> \u2557
-L -> \u255A
-J -> \u255D
-"""
-
-
-"""
-╔ ╝ ╚ ╗ ║ ═ 
-"""
-
-closers = {
-    "╔" : ["╗", "║"],
-    "╚" : ["╝", "║"],
-    "║" : ["╗", "╝"]
-}
