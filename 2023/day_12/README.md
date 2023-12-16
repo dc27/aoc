@@ -1,0 +1,3 @@
+Tough Day this one. Defintely one I'll want to come back to. Looking online several people went about solving this with a combination of recursion + caching. A redditor posted a nice guide on a python implementation which is the part_1.py solution. Another redditor went about it in a different way. Instead of recursively finding permutations that satisfied the puzzle's cryptic criteria, they went for going through each character in the spring array and keeping track of valid permutations. It felt a bit like a card counting strategy. They coded there solution in Dart, I've attempted to parse that into (hopefully) pythonic python in `rewrite.py`.
+
+For me though: manky day
