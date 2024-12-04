@@ -1,6 +1,3 @@
-import re
-import math
-
 def parse_input(file:str="input.txt")->list[list]:
 
   GRID = []
