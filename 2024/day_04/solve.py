@@ -15,7 +15,8 @@ def solve(file:str="input.txt", part=1)->int:
   """
   Day 4 Solution
   1. parse input into navigable grid
-  2. 
+  2. depending on part check each direction axis (horizontal, vertical, negative diagonal, positive diagonal)
+     for XMAS
   """
 
   GRID = parse_input(file=file)
