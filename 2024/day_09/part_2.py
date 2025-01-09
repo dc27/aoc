@@ -1,4 +1,6 @@
-file = "test.txt"
+from itertools import zip_longest
+
+file = "input.txt"
 
 # 1. parse input
 for line in open(file, "r"):
@@ -6,113 +8,65 @@ for line in open(file, "r"):
   disk = list(map(int, list(disk_dense)))
 
 
-
 files = disk[::2]
 spaces = disk[1::2]
 
-print(files)
-print(spaces)
 
+files = [(i, f) for i, f in enumerate(files)]
 
-# starting at the end: 
-# for each file in the string:
-# .... try to put it in an earlier slot
-# .... if you can't
-# ........ leave it forever
-# .... move it, remove the empty space of that size, the moved file creates empty space
+# [(filenumber, filesize)]
 
+# init copy to lookup original positions
+files_og = files.copy()
 
-disk_flat = [
-    i // 2 if i % 2 == 0 else "."
-    for i, entity in enumerate(disk)
-    for _ in range(entity)
-]
+# work backward through the list of files
+for fi in range(len(files)-1, -1, -1):
+  
+  # get the up-to-date location of next file
+  F = files_og[fi]
+  floc = files.index(F)
+  # popped file gets placed back in the list,
+  # either in the place it came from or where there's a space
+  files.pop(floc)
 
-print(disk_flat)
+  # try each space in order to see if it fits
+  for si in range(len(spaces)):
 
-
-exit()
-
-
-
-
-
-
-
-def defrag_disk(disk):
-
-
-
-
-  files = disk[::2]
-  end_point = sum(files)
-  files_indices = [i for i in range(len(files))]
-
-  disk_efficient = []
-  files_to_add = []
-
-  for i, entity in enumerate(disk):
-    
-    if i % 2 == 0:
-      for _ in range(entity):
-        disk_efficient.append(i // 2)
-        
-
-        if len(disk_efficient) == end_point:
-          return disk_efficient
-
-
-    else:
-      while len(files_to_add) < entity:
-        to_add = files.pop()
-        file_size_to_add = files_indices.pop()
+    # if we get to the file location, there's not a space
+    if si == floc:
+      files.insert(floc, F)
+      break
+  
+    # if there's space:
+    if F[1] <= spaces[si]:
       
-        for n in range(to_add):
-          files_to_add.append(file_size_to_add)
-        
-      for _ in range(entity):
-        disk_efficient.append(files_to_add.pop(0))
-        
+      # fill space with filesize (reduce space)
+      spaces[si] -= F[1]
 
-        if len(disk_efficient) == end_point:
-          return disk_efficient
+      # collapse surrounding spaces
+      if fi < len(spaces):
+        spaces[floc-1] += F[1] + spaces.pop(floc)
+      else:
+        spaces[floc-1] += F[1]
+      
+      # actually move the file
+      files.insert(si+1, F)
+      spaces.insert(si, 0)
+      break
+      
 
-          
-disk_efficient = defrag_disk(disk)
+# reconstruct the list with files and spaces
+disk_efficient = []
 
-checksum = sum([x * i for i, x in enumerate(disk_efficient)])
+for f, s in zip_longest(files, spaces):
+  disk_efficient.append(f)
+  disk_efficient.append((0, s))
 
+disk_flat = []
+
+for entity in disk_efficient:
+  entity_expanded = [entity[0]] * entity[1]
+  disk_flat.extend(entity_expanded)
+
+checksum = sum([x * i for i, x in enumerate(disk_flat)])
 print(checksum)
-
-
-
-
-
-########    
-# earliest spot 99 fits?
-# 00...111...2...333.44.5555.6666.777.888899
-# 0099.111...2...333.44.5555.6666.777.8888..
-
-# earliest spot 8888 fits?
-# 0099.111...2...333.44.5555.6666.777.8888..
-# nowhere...
-# 8888 is to be left alone
-
-# earliest spot 777 fits?
-# 0099.111...2...333.44.5555.6666.777.8888..
-# 0099.1117772...333.44.5555.6666.....8888..
-
-# ...earliest spot 6666 fits?
-# nowhere
-# 6666 is to be left alone
-# earliest spot 555 fits?
-# nowhere
-# 555 is to be left alone
-
-# earliest spot 44 fits?
-# 0099.1117772...333.44.5555.6666.....8888..
-# 0099.111777244.333....5555.6666.....8888..
-
-# earliest spot 333 fits?
-# 00992111777.44.333....5555.6666.....8888..
-# 00992111777.44.333....5555.6666.....8888..
